@@ -1,0 +1,79 @@
+<%- include('partials/header.ejs') %>
+
+<header>
+    <h1>Cocktail Finder 🍹</h1>
+    <p>Discover your next favorite drink!</p>
+</header>
+
+<div class="filter-container">
+    <form action="/filter" method="GET">
+        <label for="category">Or filter by category:</label>
+        <select name="category" id="category" onchange="this.form.submit()">
+            <option value="">-- Select a Category --</option>
+            <% if(categories) { %>
+                <% categories.forEach(cat => { %>
+                    <option value="<%= cat.strCategory %>" <%= (typeof selectedCategory !== 'undefined' && selectedCategory === cat.strCategory) ? 'selected' : '' %>>
+                        <%= cat.strCategory %>
+                    </option>
+                <% }) %>
+            <% } %>
+        </select>
+    </form>
+</div>
+
+
+<main>
+    <% if (error) { %>
+        <p class="error"><%= error %></p>
+    <% } %>
+    
+    <% if (drinksList) { %>
+        <h2>Showing cocktails in: <%= selectedCategory %></h2>
+        <div class="drinks-grid">
+            <% drinksList.forEach(drink => { %>
+                <div class="drink-item">
+                    <img src="<%= drink.strDrinkThumb %>" alt="<%= drink.strDrink %>">
+                    <h3><%= drink.strDrink %></h3>
+                </div>
+            <% }) %>
+        </div>
+    <% } %>
+
+    <% if (cocktail) { %>
+        <div class="cocktail-card">
+            <div class="cocktail-image">
+                <img src="<%= cocktail.strDrinkThumb %>" alt="Image of <%= cocktail.strDrink %>">
+            </div>
+            <div class="cocktail-details">
+                <h2><%= cocktail.strDrink %></h2>
+                <p><strong>Category:</strong> <%= cocktail.strCategory %></p>
+                <p><strong>Glass:</strong> <%= cocktail.strGlass %></p>
+                
+                <h3>Ingredients</h3>
+                <ul>
+                    <% for(let i = 1; i <= 15; i++) { %>
+                        <% if (cocktail['strIngredient' + i]) { %>
+                            <li>
+                                <%= cocktail['strMeasure' + i] || '' %> <%= cocktail['strIngredient' + i] %>
+                            </li>
+                        <% } %>
+                    <% } %>
+                </ul>
+
+                <h3>Instructions</h3>
+                <p class="instructions"><%= cocktail.strInstructions %></p>
+            </div>
+        </div>
+        <a href="/" class="btn-refresh">Get Another Random Cocktail</a>
+    <% } %>
+    <% if (quote) { %>
+        <div class="quote-container">
+            <h3>Quote of the Day</h3>
+            <blockquote>"<%= quote.q %>"</blockquote>
+            <cite>— <%= quote.a %></cite>
+        </div>
+    <% } %>
+
+</main>
+
+<%- include('partials/footer.ejs') %>
